@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
+import Form from "./components/Form";
 
 import MoviesList from "./components/MoviesList";
 import "./App.css";
@@ -44,6 +45,8 @@ function App() {
     SetError(null)
   }
 
+
+
   let content = <p>Found no movies.</p>;
 
   if (movies.length > 0) {
@@ -59,9 +62,16 @@ function App() {
   return (
     <React.Fragment>
       <section>
+        <Form />
+        
+      </section>
+      <section>
         <button onClick={fetchMoviesHandler}>Fetch Movies</button><br></br><br></br>
         <button onClick={cancelHandler}>Cancel</button>
       </section>
+      {/* <section>
+        <MoviesList />
+      </section> */}
       <section>{content}</section>
     </React.Fragment>
   );
