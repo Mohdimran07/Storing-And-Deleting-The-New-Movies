@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
-import Form from "./components/Form";
+
+import AddMovie from "./components/AddMovie";
 
 import MoviesList from "./components/MoviesList";
 import "./App.css";
@@ -15,22 +16,26 @@ function App() {
     setIsLoading(true);
     SetError(null);
     try {
-      const response = await fetch("https://swapi.dev/api/films/");
+      const response = await fetch("https://react-http-d1c7e-default-rtdb.firebaseio.com/movies.json");
       if (!response.ok) {
         throw new Error("Something went wrong!...Retyring");
       }
 
       const data = await response.json();
+      
+      const loadedMovies = [];
 
-      const transformesMovies = data.results.map((movieData) => {
-        return {
-          id: movieData.episode_id,
-          title: movieData.title,
-          openingText: movieData.opening_crawl,
-          releaseDate: movieData.release_date,
-        };
-      });
-      setMovies(transformesMovies);
+      for(const key in data){
+        loadedMovies.push({
+          id: key,
+          title: data[key].title,
+          openingText: data[key].openingText,
+          releaseDate: data[key].releaseDate,
+        })
+      }
+
+     
+      setMovies(loadedMovies);
     } catch (error) {
       SetError(error.message);
     }
@@ -43,6 +48,18 @@ function App() {
 
   function cancelHandler(error){
     SetError(null)
+  }
+
+  async function addMovieHandler(movie){
+    const response = await fetch('https://react-http-d1c7e-default-rtdb.firebaseio.com/movies.json',{
+      method : 'POST',
+      body: JSON.stringify(movie),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    const data = await response.json();
+    console.log(data)
   }
 
 
@@ -62,9 +79,10 @@ function App() {
   return (
     <React.Fragment>
       <section>
-        <Form />
+        <AddMovie  onAddMovie={addMovieHandler}/>
         
       </section>
+      
       <section>
         <button onClick={fetchMoviesHandler}>Fetch Movies</button><br></br><br></br>
         <button onClick={cancelHandler}>Cancel</button>
